@@ -16,8 +16,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -36,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import androidx.compose.foundation.lazy.items
 import com.exercise.healthylivingapp.ui.theme.Gray
 import com.exercise.healthylivingapp.ui.theme.Green14
 import com.exercise.healthylivingapp.ui.theme.Green7D
@@ -180,38 +184,45 @@ fun TaskListContent(
 
 @Composable
 fun TaskList(tasks: List<Task>, onDelete: (Task) -> Unit) {
-    Column {
-        tasks.forEach { task ->
+    LazyColumn {
+        items(tasks) { task ->
             TaskItem(task, onDelete)
             Spacer(modifier = Modifier.height(8.dp))
-
         }
     }
 }
 
 @Composable
 fun TaskItem(task: Task, onDelete: (Task)-> Unit) {
-    var grayscale by remember { mutableStateOf(false) }
 
-    Row(
-
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .clickable { onDelete(task) },
-        horizontalArrangement = Arrangement.SpaceBetween
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        )
+        {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = task.title, style = MaterialTheme.typography.bodyLarge)
+            }
+            task.imageUrl?.let { url ->
+                AsyncImage(
+                    model = url,
+                    contentDescription = null,
+                    modifier = Modifier.size(68.dp),
 
-        Text(text = task.title, style = MaterialTheme.typography.bodyLarge)
-
-        task.imageUrl?.let { url ->
-            AsyncImage(
-                model = url,
-                contentDescription = null,
-                modifier = Modifier.size(68.dp),
-
-            )
+                    )
+            }
         }
+
     }
 }
 
